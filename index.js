@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
@@ -30,12 +30,20 @@ const run = async () => {
             .collection("inventories");
 
         // get all inventories
-
         app.get("/inventories", async (req, res) => {
             const query = {};
             const cursor = inventoriesCollection.find(query);
             const inventories = await cursor.toArray();
             res.send(inventories);
+        });
+        // for single inventory
+        app.get("/inventories/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const inventory = await inventoriesCollection.findOne(query);
+
+            res.send(inventory);
         });
         console.log("mongodb connected");
     } catch (err) {
