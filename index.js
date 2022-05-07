@@ -39,12 +39,26 @@ const run = async () => {
         // for single inventory
         app.get("/inventories/:id", async (req, res) => {
             const id = req.params.id;
-            console.log(id);
             const query = { _id: ObjectId(id) };
             const inventory = await inventoriesCollection.findOne(query);
 
             res.send(inventory);
         });
+        //ADD NEW INVENTORY
+        app.post("/addInventory", async (req, res) => {
+            const newInventory = req.body;
+
+            const result = await inventoriesCollection.insertOne(newInventory);
+            res.send(result);
+        });
+        //DELETE A INVENTORY
+        app.delete("/inventories/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await inventoriesCollection.deleteOne(query);
+            res.send(result);
+        });
+
         console.log("mongodb connected");
     } catch (err) {
         console.log(err);
