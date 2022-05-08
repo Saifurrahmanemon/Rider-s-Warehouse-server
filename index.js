@@ -2,8 +2,8 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const port = process.env.PORT || 5000;
 require("dotenv").config();
+const port = process.env.PORT || 5000;
 const app = express();
 
 //MIDDLEWARE
@@ -29,9 +29,6 @@ function verifyJWT(req, res, next) {
     });
 }
 
-app.get("/", (req, res) => {
-    res.send("server is running");
-});
 //DATABASE
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
@@ -132,7 +129,10 @@ const run = async () => {
 
 run().catch(console.dir);
 
-//
+app.get("/", (req, res) => {
+    res.send("server is running");
+});
+//listen
 app.listen(port, (req, res) => {
     console.log("server is running at port", port);
 });
