@@ -12,20 +12,19 @@ app.use(express.json());
 
 //  jwt verification
 function verifyJWT(req, res, next) {
-    const getAuthHeader = req.headers.authorization;
-    if (!getAuthHeader) {
-        return res.status(401).send({ message: "unauthorize access" });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: "unauthorized access" });
     }
-
-    const getToken = getAuthHeader.split(" ")[1];
-    jwt.verify(getToken, process.env.ACCESS_TOKEN, (err, decoded) => {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
         if (err) {
             return res
                 .status(403)
-                .send("forbidden access!!😕 forbidden access");
+                .send({ message: "can not go further!!😕 forbidden access" });
         }
-        console.log("decoded", decoded);
-        res.decoded = decoded;
+
+        req.decoded = decoded;
         next();
     });
 }
@@ -111,16 +110,16 @@ const run = async () => {
         app.get("/myItems", verifyJWT, async (req, res) => {
             const email = req.query.email;
             const decodedEmail = req.decoded.email;
-            console.log(req.decoded);
+
             if (email === decodedEmail) {
                 const query = { email: email };
                 const cursor = inventoriesCollection.find(query);
-                const myItems = await cursor.toArray();
-                res.send(myItems);
+                const orders = await cursor.toArray();
+                res.send(orders);
             } else {
-                return res
-                    .status(403)
-                    .send("forbidden access!!😕 forbidden access");
+                res.status(403).send({
+                    message: "can not go further!!😕 forbidden access",
+                });
             }
         });
 
